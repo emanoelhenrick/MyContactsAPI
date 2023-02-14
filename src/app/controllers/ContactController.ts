@@ -1,6 +1,13 @@
 import { Request, Response } from "express";
 import ContactsRepository from "../repositories/ContactsRepository";
 
+interface NewContactProps {
+  name: string
+  email: string
+  phone: string
+  category_id: string
+}
+
 class ContactController {
   async index(req: Request, res: Response) {
     const contacts = await ContactsRepository.findAll();
@@ -19,13 +26,24 @@ class ContactController {
     res.json(contact);
   }
 
-  store(req: Request, res: Response) {
-    res.send("ok");
+  async store(req: Request, res: Response) {
+    const { name, email, phone, category_id } = req.body;
+
+    const contactsExists = await ContactsRepository.findByEmail(email);
+
+    if (contactsExists) {
+      return res.status(400).json({ error: "This e-mail is already been taken."});
+    }
+
+    const contact = await ContactsRepository.create({
+      name, email, phone, category_id
+    });
+
+    res.json(contact);
   }
 
-  update() {
-
-  }
+  // update() {
+  // }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;

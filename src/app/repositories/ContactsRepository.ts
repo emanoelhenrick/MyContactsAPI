@@ -1,5 +1,12 @@
 import { v4 } from "uuid";
 
+interface NewContactProps {
+  name: string
+  email: string
+  phone: string
+  category_id: string
+}
+
 let contacts = [
   {
     id: v4(),
@@ -30,9 +37,30 @@ class ContactsRepository {
     ) );
   }
 
+  findByEmail(email: string) {
+    return new Promise((resolve) => resolve(
+      contacts.find((contact) => contact.email === email)
+    ) );
+  }
+
   delete(id: string) {
     return new Promise<void>((resolve) => {
       contacts = contacts.filter((contact) => contact.id !== id);
+      resolve();
+    });
+  }
+
+  create({ name, email, phone, category_id }: NewContactProps) {
+    return new Promise<void>((resolve) => {
+      const newContact = {
+        id: v4(),
+        name,
+        email,
+        phone,
+        category_id
+      };
+
+      contacts.push(newContact);
       resolve();
     });
   }
