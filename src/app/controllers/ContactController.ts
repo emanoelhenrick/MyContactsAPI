@@ -29,10 +29,14 @@ class ContactController {
   async store(req: Request, res: Response) {
     const { name, email, phone, category_id } = req.body;
 
+    if (!name) {
+      return res.status(400).json({ error: "Name is required."});
+    }
+
     const contactsExists = await ContactsRepository.findByEmail(email);
 
     if (contactsExists) {
-      return res.status(400).json({ error: "This e-mail is already been taken."});
+      return res.status(400).json({ error: "This e-mail is already in use."});
     }
 
     const contact = await ContactsRepository.create({
@@ -42,8 +46,33 @@ class ContactController {
     res.json(contact);
   }
 
-  // update() {
-  // }
+  async update(req: Request, res: Response) {
+    const { id } = req.params;
+    const { name, email, phone, category_id } = req.body;
+
+    const contactExists = await ContactsRepository.findById(id);
+
+    if(!contactExists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!name) {
+      return res.status(400).json({ error: "Name is required."});
+    }
+
+    const contactByEmail: any = await ContactsRepository.findByEmail(email);
+
+    if (contactByEmail && contactByEmail.id !== id) {
+      return res.status(400).json({ error: "This e-mail is already in use."});
+    }
+
+    const contact = await ContactsRepository.update(id, {
+      name, email, phone, category_id
+    });
+
+    res.json(contact);
+
+  }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;

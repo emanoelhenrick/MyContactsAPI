@@ -7,6 +7,14 @@ interface NewContactProps {
   category_id: string
 }
 
+interface ContactProps {
+  id: string
+  name: string
+  email: string
+  phone: string
+  category_id: string
+}
+
 let contacts = [
   {
     id: v4(),
@@ -51,7 +59,7 @@ class ContactsRepository {
   }
 
   create({ name, email, phone, category_id }: NewContactProps) {
-    return new Promise<void>((resolve) => {
+    return new Promise<NewContactProps>((resolve) => {
       const newContact = {
         id: v4(),
         name,
@@ -61,7 +69,25 @@ class ContactsRepository {
       };
 
       contacts.push(newContact);
-      resolve();
+      resolve(newContact);
+    });
+  }
+
+  update(id: string, { name, email, phone, category_id }: NewContactProps) {
+    return new Promise((resolve) => {
+      const updatedContact = {
+        id,
+        name,
+        email,
+        phone,
+        category_id
+      };
+
+      contacts = contacts.map((contact) => (
+        contact.id === id ? updatedContact : contact
+      ));
+      
+      resolve(updatedContact);
     });
   }
 
