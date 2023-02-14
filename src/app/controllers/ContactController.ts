@@ -19,16 +19,24 @@ class ContactController {
     res.json(contact);
   }
 
-  store() {
-
+  store(req: Request, res: Response) {
+    res.send("ok");
   }
 
   update() {
 
   }
 
-  delete() {
+  async delete(req: Request, res: Response) {
+    const { id } = req.params;
+    const contact = await ContactsRepository.findById(id);
 
+    if(!contact){
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    await ContactsRepository.delete(id);
+    res.sendStatus(204);
   }
 }
 

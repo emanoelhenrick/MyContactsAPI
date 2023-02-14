@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 
-const contacts = [
+let contacts = [
   {
     id: v4(),
     name: "Emanoel",
@@ -28,6 +28,13 @@ class ContactsRepository {
     return new Promise((resolve) => resolve(
       contacts.find((contact) => contact.id === id)
     ) );
+  }
+
+  delete(id: string) {
+    return new Promise<void>((resolve) => {
+      contacts = contacts.filter((contact) => contact.id !== id);
+      resolve();
+    });
   }
 
   
