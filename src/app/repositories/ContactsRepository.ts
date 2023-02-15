@@ -1,4 +1,6 @@
 import { v4 } from "uuid";
+import * as db from "../../database";
+
 
 interface NewContactProps {
   name: string
@@ -58,19 +60,14 @@ class ContactsRepository {
     });
   }
 
-  create({ name, email, phone, category_id }: NewContactProps) {
-    return new Promise<NewContactProps>((resolve) => {
-      const newContact = {
-        id: v4(),
-        name,
-        email,
-        phone,
-        category_id
-      };
+  async create({ name, email, phone, category_id }: NewContactProps) {
+    const [row] = await db.query(`
+      INSERT INTO contacts(name, email, phone, category_id)
+      VALUES($1, $2, $3, $4)
+      RETURNING *
+    `, [name, email, phone, category_id]);
 
-      contacts.push(newContact);
-      resolve(newContact);
-    });
+    return row;
   }
 
   update(id: string, { name, email, phone, category_id }: NewContactProps) {

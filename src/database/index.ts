@@ -10,11 +10,9 @@ const client = new Client({
 
 client.connect();
 
-export async function Query(query: string) {
-  const { rows } = await client.query(query);
+export async function query(query: string, values: string[]) {
+  const { rows } = await client.query(query, values);
   return rows;
 }
-
-Query("SELECT * FROM contacts").then(console.log);
 
 
