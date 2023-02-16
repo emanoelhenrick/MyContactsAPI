@@ -10,7 +10,8 @@ interface NewContactProps {
 
 class ContactController {
   async index(req: Request, res: Response) {
-    const contacts = await ContactsRepository.findAll();
+    const { orderBy } = req.query;
+    const contacts = await ContactsRepository.findAll(orderBy as string);
 
     res.json(contacts);
   }
@@ -76,11 +77,6 @@ class ContactController {
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;
-    const contact = await ContactsRepository.findById(id);
-
-    if(!contact){
-      return res.status(404).json({ error: "User not found." });
-    }
 
     await ContactsRepository.delete(id);
     res.sendStatus(204);
